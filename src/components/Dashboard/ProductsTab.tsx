@@ -305,7 +305,7 @@ const ProductsTab = () => {
     await loadRazorpayScript();
 
     // Send subscription data to backend
-    const response = await fetch('http://localhost:5000/api/subscriptions', {
+    const response = await fetch('https://onecrate-backend.onrender.com/api/subscriptions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -335,7 +335,7 @@ const ProductsTab = () => {
       handler: async (response: any) => {
         // Verify payment on the backend
         try {
-          const verifyResponse = await fetch('http://localhost:5000/api/subscriptions/verify-payment', {
+          const verifyResponse = await fetch('https://onecrate-backend.onrender.com/api/subscriptions/verify-payment', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

@@ -60,7 +60,7 @@ const ProfileTab = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/user/me', {
+        const res = await fetch('https://onecrate-backend.onrender.com/api/user/me', {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -90,7 +90,7 @@ const ProfileTab = () => {
 
   const handleSave = async () => {
     try {
-      const res = await fetch('http ://localhost:5000/api/user/profile', {
+      const res = await fetch('https://onecrate-backend.onrender.com/api/user/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

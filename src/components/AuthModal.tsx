@@ -65,7 +65,7 @@ useEffect(() => {
 
 const handleGoogleCallback = async (response: any) => {
   try {
-    const res = await fetch("http://localhost:5000/api/auth/google", {
+    const res = await fetch("https://onecrate-backend.onrender.com/api/auth/google", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ credential: response.credential }),

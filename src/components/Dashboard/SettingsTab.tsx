@@ -83,7 +83,7 @@ const SettingsTab: React.FC = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/settings', {
+      const res = await fetch('https://onecrate-backend.onrender.com/api/settings', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
