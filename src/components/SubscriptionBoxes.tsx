@@ -18,7 +18,7 @@ interface SubscriptionBoxesProps {
 }
 
 const SubscriptionBoxes = ({ onSubscriptionClick }: SubscriptionBoxesProps) => {
- const subscriptionBoxes = [
+   const subscriptionBoxes = [
   {
     id: 1,
     title: "Kitchen Essentials",
@@ -62,7 +62,6 @@ const SubscriptionBoxes = ({ onSubscriptionClick }: SubscriptionBoxesProps) => {
     itemSavings: "Save ₹40-₹180 per item"
   }
 ];
-
 
   const gridClass =
     subscriptionBoxes.length === 1
@@ -199,10 +198,9 @@ const SubscriptionBoxes = ({ onSubscriptionClick }: SubscriptionBoxesProps) => {
                   </div>
 
                   {/* Subscribe Button */}
-                  {/* <Button size="lg" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg">
-                    Login to continue <ArrowRight className="ml-2 w-4 h-4" />
-                  </Button> */}
-                  <p>Login to continue</p>
+                  <Button size="lg" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg">
+                    Subscribe Now <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
                 </div>
               </div>
             </motion.div>
