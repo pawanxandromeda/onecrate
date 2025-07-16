@@ -42,35 +42,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
   const { toast } = useToast();
   const googleRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    // Load Google SDK dynamically to ensure availability
-    if (!window.google) {
-      const script = document.createElement('script');
-      script.src = 'https://accounts.google.com/gsi/client';
-      script.async = true;
-      script.onload = () => {
-        if (window.google && googleRef.current) {
-          console.log("Google SDK loaded. Initializing...");
-          window.google.accounts.id.initialize({
-            client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID!,
-            callback: handleGoogleCallback,
-          });
-          window.google.accounts.id.renderButton(googleRef.current, {
-            theme: 'outline',
-            size: 'large',
-            width: '100%',
-          });
-        }
-      };
-      document.body.appendChild(script);
-
-      return () => {
-        if (document.body.contains(script)) {
-          document.body.removeChild(script);
-        }
-      };
-    } else if (window.google && googleRef.current) {
-      console.log("Google SDK already loaded. Initializing...");
+useEffect(() => {
+  const interval = setInterval(() => {
+    if (isOpen && window.google && googleRef.current) {
+      console.log("Google SDK loaded. Initializing...");
       window.google.accounts.id.initialize({
         client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID!,
         callback: handleGoogleCallback,
@@ -80,47 +55,52 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
         size: 'large',
         width: '100%',
       });
+      clearInterval(interval); // stop polling
     }
-  }, [isOpen]);
+  }, 200);
 
-  const handleGoogleCallback = async (response: any) => {
+  return () => clearInterval(interval); // cleanup
+}, [isOpen]);
+
+
+const handleGoogleCallback = async (response: any) => {
+  try {
+    const res = await fetch("https://onecrate-backend.onrender.com/api/auth/google", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ credential: response.credential }),
+    });
+
+    const text = await res.text();
+    let data;
     try {
-      const res = await fetch("https://onecrate-backend.onrender.com/api/auth/google", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ credential: response.credential }),
-      });
-
-      const text = await res.text();
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (jsonErr) {
-        throw new Error("Invalid JSON from server: " + text);
-      }
-
-      if (!res.ok) throw new Error(data.message || "Google login failed");
-
-      localStorage.setItem("token", data.token);
-      setUser(data.user);
-      toast({ title: "Logged in with Google" });
-
-      // Trigger onSuccess and close modal
-      onSuccess?.();
-      onClose();
-
-      // Explicitly navigate to profile to handle mobile redirects
-      window.location.href = "/#profile";
-    } catch (err: any) {
-      console.error("Google login error:", err);
-      setGoogleError(err.message || "Something went wrong");
-      toast({
-        title: "Google Login Failed",
-        description: err.message || "Something went wrong",
-        variant: "destructive",
-      });
+      data = JSON.parse(text);
+    } catch (jsonErr) {
+      throw new Error("Invalid JSON from server: " + text);
     }
-  };
+
+    if (!res.ok) throw new Error(data.message || "Google login failed");
+
+    localStorage.setItem("token", data.token);
+    setUser(data.user);
+    toast({ title: "Logged in with Google" });
+
+    // Ensure the modal closes and navigates to profile
+    onSuccess?.();
+    onClose();
+
+    // Explicitly navigate to the profile page to handle mobile redirects
+    window.location.href = "/#profile"; // Adjust this to your routing logic
+  } catch (err: any) {
+    console.error("Google login error:", err);
+    setGoogleError(err.message || "Something went wrong");
+    toast({
+      title: "Google Login Failed",
+      description: err.message || "Something went wrong",
+      variant: "destructive",
+    });
+  }
+};
 
   const handleSubmit = async (e: React.FormEvent, type: 'login' | 'signup') => {
     e.preventDefault();
@@ -184,6 +164,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
           </TabsList>
 
+          {/* LOGIN */}
           <TabsContent value="login" className="space-y-4">
             <motion.form
               onSubmit={(e) => handleSubmit(e, 'login')}
@@ -223,6 +204,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
             </motion.form>
           </TabsContent>
 
+          {/* SIGNUP */}
           <TabsContent value="signup" className="space-y-4">
             <motion.form
               onSubmit={(e) => handleSubmit(e, 'signup')}
