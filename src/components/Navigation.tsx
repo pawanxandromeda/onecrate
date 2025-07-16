@@ -123,7 +123,7 @@ const Navigation: React.FC<NavigationProps> = ({
               </div>
               <div className="flex flex-col">
                 <span className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                  OneCrate
+                  12 Crate
                 </span>
                 <span className="text-xs text-gray-500">Premium Essentials</span>
               </div>

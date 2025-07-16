@@ -73,7 +73,7 @@ const Index = () => {
     setIsAuthModalOpen(false);
     setCurrentView('profile');
     toast({
-      title: 'Welcome to OneCrate! 🎉',
+      title: 'Welcome to 12 Crate! 🎉',
       description:
         "You're now logged in. Explore your profile and manage your subscriptions.",
     });

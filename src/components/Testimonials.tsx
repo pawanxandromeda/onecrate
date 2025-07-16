@@ -10,7 +10,7 @@ const Testimonials = () => {
       name: "Simran Kaur",
       role: "Homemaker & Entrepreneur",
      // image: "https://images.unsplash.com/photo-1494790108755-2616b612b047?auto=format&fit=crop&w=150&q=80",
-      content: "OneCrate has transformed our household management. Premium products at incredible savings - we save ₹3500 monthly while getting top-quality essentials!",
+      content: "12 Crate has transformed our household management. Premium products at incredible savings - we save ₹3500 monthly while getting top-quality essentials!",
       rating: 5,
       location: "Mohali"
     },

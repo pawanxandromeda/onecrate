@@ -111,7 +111,7 @@ icon: DollarSign,
           <h2 className="text-5xl lg:text-7xl font-bold text-gray-900 mb-8 leading-tight">
             Why Choose{' '}
             <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">
-              OneCrate?
+              12 Crate?
             </span>
           </h2>
           <p className="text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">

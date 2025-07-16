@@ -58,7 +58,7 @@ const Footer = () => {
                 </motion.span>
               </div>
               <span className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
-                OneCrate
+                12 Crate
               </span>
             </motion.div>
             
@@ -160,7 +160,7 @@ const Footer = () => {
         <div className="mt-8 pt-8 border-t border-gray-800 flex flex-col md:flex-row items-center justify-between">
           <div className="flex items-center space-x-4 mb-4 md:mb-0">
             <p className="text-gray-300 text-sm">
-              © 2024 OneCrate. All rights reserved.
+              © 2024 12 Crate. All rights reserved.
             </p>
             <div className="flex items-center space-x-1">
               <span className="text-gray-300 text-sm">Made with</span>

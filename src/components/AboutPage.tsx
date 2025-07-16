@@ -89,7 +89,7 @@ const AboutPage = () => {
             <h1 className="text-6xl lg:text-8xl font-bold text-gray-900 mb-8 leading-tight">
               About{' '}
               <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">
-                OneCrate
+                12 Crate
               </span>
             </h1>
             <p className="text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
@@ -121,7 +121,7 @@ const AboutPage = () => {
               <div>
                 <h2 className="text-4xl font-bold text-gray-900 mb-6">Our Story</h2>
                 <p className="text-gray-600 mb-6 leading-relaxed text-lg">
-                  Founded in 2025, OneCrate was born from a simple frustration: running out of essential 
+                  Founded in 2025, 12 Crate was born from a simple frustration: running out of essential 
                   household items at the worst possible moments. Our founders, busy parents themselves, 
                   knew there had to be a better way.
                 </p>
