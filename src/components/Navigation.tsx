@@ -113,13 +113,13 @@ const Navigation: React.FC<NavigationProps> = ({
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-   <motion.div
+  <motion.div
   className="flex items-center space-x-2 cursor-pointer group"
   whileHover={{ scale: 1.02 }}
   onClick={onLogoClick}
 >
   <img
-    className="w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 lg:w-44 lg:h-44 object-contain"
+    className="w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 lg:w-56 lg:h-56 object-contain"
     src="/logo.svg"
     alt="12 Crate Premium Essentials Logo"
     loading="lazy"
@@ -128,6 +128,7 @@ const Navigation: React.FC<NavigationProps> = ({
     }}
   />
 </motion.div>
+
 
 
             <div className="hidden lg:flex items-center space-x-2">
