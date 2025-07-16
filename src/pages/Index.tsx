@@ -18,25 +18,23 @@ import { userAtom } from '@/atoms/user';
 
 const Index = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [currentView, setCurrentView] = useState<
     'home' | 'profile' | 'about' | 'contact' | 'subscription-detail'
   >('home');
-  const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<
-    number | null
-  >(null);
+  const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<number | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user] = useAtom(userAtom);
   const setUser = useSetAtom(userAtom);
   const { toast } = useToast();
 
-  // Handle navigation clicks
   const handleProfileClick = () => {
     if (isLoggedIn) {
       setCurrentView('profile');
+      setIsMobileMenuOpen(false); // ✅ Close mobile menu
       toast({
         title: 'Welcome to your profile! 👋',
-        description:
-          'Here you can manage your subscriptions, settings, and preferences.',
+        description: 'Here you can manage your subscriptions, settings, and preferences.',
       });
     } else {
       setIsAuthModalOpen(true);
@@ -46,20 +44,24 @@ const Index = () => {
   const handleLogoClick = () => {
     setCurrentView('home');
     setSelectedSubscriptionId(null);
+    setIsMobileMenuOpen(false); // ✅ Close mobile menu
   };
 
   const handlePageChange = (page: string) => {
     setCurrentView(page as 'home' | 'profile' | 'about' | 'contact');
     setSelectedSubscriptionId(null);
+    setIsMobileMenuOpen(false); // ✅ Close mobile menu
   };
 
   const handleAuthClick = () => {
     setIsAuthModalOpen(true);
+    setIsMobileMenuOpen(false); // ✅ Close mobile menu
   };
 
   const handleSubscriptionClick = (subscriptionId: number) => {
     setSelectedSubscriptionId(subscriptionId);
     setCurrentView('subscription-detail');
+    setIsMobileMenuOpen(false); // ✅ Close mobile menu
   };
 
   const handleBackToSubscriptions = () => {
@@ -67,42 +69,44 @@ const Index = () => {
     setSelectedSubscriptionId(null);
   };
 
-  // Handle successful authentication
   const handleAuthSuccess = () => {
     setIsLoggedIn(true);
     setIsAuthModalOpen(false);
+    setIsMobileMenuOpen(false); // ✅ Close mobile menu
     setCurrentView('profile');
     toast({
       title: 'Welcome to 12 Crate! 🎉',
-      description:
-        "You're now logged in. Explore your profile and manage your subscriptions.",
+      description: "You're now logged in. Explore your profile and manage your subscriptions.",
     });
   };
 
-  // Handle logout
   const handleLogout = () => {
     setIsLoggedIn(false);
     localStorage.removeItem('token');
-    setUser(null); // Reset userAtom
+    setUser(null);
     setCurrentView('home');
+    setIsMobileMenuOpen(false); // ✅ Close mobile menu
     toast({
       title: 'Logged out',
       description: 'You have been successfully logged out.',
     });
   };
 
-  // Render subscription detail page
+  const commonNavProps = {
+    onAuthClick: handleAuthClick,
+    onProfileClick: handleProfileClick,
+    onLogoClick: handleLogoClick,
+    onPageChange: handlePageChange,
+    onLogout: handleLogout,
+    user: user,
+    isMobileMenuOpen,
+    setIsMobileMenuOpen,
+  };
+
   if (currentView === 'subscription-detail' && selectedSubscriptionId) {
     return (
       <>
-        <Navigation
-          onAuthClick={handleAuthClick}
-          onProfileClick={handleProfileClick}
-          onLogoClick={handleLogoClick}
-          onPageChange={handlePageChange}
-          onLogout={handleLogout}
-          user={user}
-        />
+        <Navigation {...commonNavProps} />
         <SubscriptionDetail
           subscriptionId={selectedSubscriptionId}
           onBack={handleBackToSubscriptions}
@@ -112,18 +116,10 @@ const Index = () => {
     );
   }
 
-  // Render other pages
   if (currentView === 'profile') {
     return (
       <>
-        <Navigation
-          onAuthClick={handleAuthClick}
-          onProfileClick={handleProfileClick}
-          onLogoClick={handleLogoClick}
-          onPageChange={handlePageChange}
-          onLogout={handleLogout}
-          user={user}
-        />
+        <Navigation {...commonNavProps} />
         <UserProfile />
       </>
     );
@@ -132,14 +128,7 @@ const Index = () => {
   if (currentView === 'about') {
     return (
       <>
-        <Navigation
-          onAuthClick={handleAuthClick}
-          onProfileClick={handleProfileClick}
-          onLogoClick={handleLogoClick}
-          onPageChange={handlePageChange}
-          onLogout={handleLogout}
-          user={user}
-        />
+        <Navigation {...commonNavProps} />
         <AboutPage />
         <Footer />
       </>
@@ -149,14 +138,7 @@ const Index = () => {
   if (currentView === 'contact') {
     return (
       <>
-        <Navigation
-          onAuthClick={handleAuthClick}
-          onProfileClick={handleProfileClick}
-          onLogoClick={handleLogoClick}
-          onPageChange={handlePageChange}
-          onLogout={handleLogout}
-          user={user}
-        />
+        <Navigation {...commonNavProps} />
         <ContactPage />
         <Footer />
       </>
@@ -166,14 +148,7 @@ const Index = () => {
   return (
     <>
       <div className="min-h-screen bg-white">
-        <Navigation
-          onAuthClick={handleAuthClick}
-          onProfileClick={handleProfileClick}
-          onLogoClick={handleLogoClick}
-          onPageChange={handlePageChange}
-          onLogout={handleLogout}
-          user={user}
-        />
+        <Navigation {...commonNavProps} />
         <Hero />
         <SubscriptionBoxes onSubscriptionClick={handleSubscriptionClick} />
         <Features />

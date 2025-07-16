@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Menu, X, Package, Bell, Search, LogOut } from 'lucide-react';
+import { User, Menu, X, Bell, Search, LogOut } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -45,6 +45,8 @@ interface NavigationProps {
   onPageChange: (page: string) => void;
   onLogout: () => void;
   user: { fullName: string; email: string } | null;
+  isMobileMenuOpen: boolean;
+  setIsMobileMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface NavItem {
@@ -60,9 +62,10 @@ const Navigation: React.FC<NavigationProps> = ({
   onPageChange,
   onLogout,
   user,
+  isMobileMenuOpen,
+  setIsMobileMenuOpen
 }) => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [scrolled, setScrolled] = useState<boolean>(false);
+  const [scrolled, setScrolled] = React.useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -83,7 +86,6 @@ const Navigation: React.FC<NavigationProps> = ({
   const navItems: NavItem[] = [
     { name: 'Home', path: 'home', highlight: false },
     { name: 'Browse Kits', path: 'home#subscriptions', highlight: true },
-   // { name: 'Features', path: 'home#features', highlight: false },
     { name: 'How It Works', path: 'home#how-it-works', highlight: false },
     { name: 'About', path: 'about', highlight: false },
     { name: 'Contact', path: 'contact', highlight: false },
@@ -98,7 +100,7 @@ const Navigation: React.FC<NavigationProps> = ({
         if (element) element.scrollIntoView({ behavior: 'smooth' });
       }, 100);
     }
-    setIsOpen(false);
+    setIsMobileMenuOpen(false);
   };
 
   return (
@@ -108,28 +110,26 @@ const Navigation: React.FC<NavigationProps> = ({
           scrolled ? 'bg-white/95 shadow-md' : 'bg-white/90'
         } backdrop-blur-md border-b border-emerald-100/30`}
         initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1  }}
+        animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-  <motion.div
-  className="flex items-center space-x-2 cursor-pointer group"
-  whileHover={{ scale: 1.02 }}
-  onClick={onLogoClick}
->
-  <img
-    className="w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 lg:w-56 lg:h-56 object-contain"
-    src="/logo.svg"
-    alt="12 Crate Premium Essentials Logo"
-    loading="lazy"
-    onError={(e) => {
-      e.currentTarget.src = '/fallback-logo.png';
-    }}
-  />
-</motion.div>
-
-
+            <motion.div
+              className="flex items-center space-x-2 cursor-pointer group"
+              whileHover={{ scale: 1.02 }}
+              onClick={onLogoClick}
+            >
+              <img
+                className="w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 lg:w-56 lg:h-56 object-contain"
+                src="/logo.svg"
+                alt="12 Crate Premium Essentials Logo"
+                loading="lazy"
+                onError={(e) => {
+                  e.currentTarget.src = '/fallback-logo.png';
+                }}
+              />
+            </motion.div>
 
             <div className="hidden lg:flex items-center space-x-2">
               {navItems.map((item, index) => (
@@ -177,7 +177,7 @@ const Navigation: React.FC<NavigationProps> = ({
                     title="Profile"
                   >
                     <div className="w-40 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-sm font-bold">
-                      {user.fullName ? user.fullName.charAt(0).toUpperCase() : 'View Products'}
+                      {user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U'}
                     </div>
                   </motion.button>
 
@@ -203,11 +203,7 @@ const Navigation: React.FC<NavigationProps> = ({
                     <User className="w-5 h-5 text-gray-600 hover:text-emerald-600" />
                   </motion.button>
 
-                  <Button
-                    className="hidden sm:flex"
-                    size="sm"
-                    onClick={onAuthClick}
-                  >
+                  <Button className="hidden sm:flex" size="sm" onClick={onAuthClick}>
                     Login
                   </Button>
                 </>
@@ -215,11 +211,11 @@ const Navigation: React.FC<NavigationProps> = ({
 
               <motion.button
                 className="lg:hidden p-2 rounded-lg hover:bg-emerald-50"
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 whileTap={{ scale: 0.95 }}
               >
                 <AnimatePresence mode="wait">
-                  {isOpen ? (
+                  {isMobileMenuOpen ? (
                     <motion.div
                       key="close"
                       initial={{ rotate: -90, opacity: 0 }}
@@ -248,14 +244,14 @@ const Navigation: React.FC<NavigationProps> = ({
       </motion.nav>
 
       <AnimatePresence>
-        {isOpen && (
+        {isMobileMenuOpen && (
           <>
             <motion.div
               className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setIsOpen(false)}
+              onClick={() => setIsMobileMenuOpen(false)}
               transition={{ duration: 0.2 }}
             />
             <motion.div
@@ -294,7 +290,7 @@ const Navigation: React.FC<NavigationProps> = ({
                       size="md"
                       onClick={() => {
                         onProfileClick();
-                        setIsOpen(false);
+                        setIsMobileMenuOpen(false);
                       }}
                     >
                       Profile
@@ -304,7 +300,7 @@ const Navigation: React.FC<NavigationProps> = ({
                       size="md"
                       onClick={() => {
                         onLogout();
-                        setIsOpen(false);
+                        setIsMobileMenuOpen(false);
                       }}
                     >
                       Logout
@@ -316,7 +312,7 @@ const Navigation: React.FC<NavigationProps> = ({
                     size="md"
                     onClick={() => {
                       onAuthClick();
-                      setIsOpen(false);
+                      setIsMobileMenuOpen(false);
                     }}
                   >
                     Get Started
@@ -324,18 +320,10 @@ const Navigation: React.FC<NavigationProps> = ({
                 )}
 
                 <div className="flex justify-center space-x-3 pt-3">
-                  <motion.button
-                    className="p-2 rounded-lg hover:bg-emerald-50"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
+                  <motion.button className="p-2 rounded-lg hover:bg-emerald-50">
                     <Search className="w-5 h-5 text-gray-600 hover:text-emerald-600" />
                   </motion.button>
-                  <motion.button
-                    className="p-2 rounded-lg hover:bg-emerald-50 relative"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
+                  <motion.button className="p-2 rounded-lg hover:bg-emerald-50 relative">
                     <Bell className="w-5 h-5 text-gray-600 hover:text-emerald-600" />
                     <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full" />
                   </motion.button>
