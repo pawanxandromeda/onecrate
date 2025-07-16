@@ -90,7 +90,7 @@ const ProfileTab = () => {
 
   const handleSave = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/user/profile', {
+      const res = await fetch('http ://localhost:5000/api/user/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
