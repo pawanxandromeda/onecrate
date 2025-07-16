@@ -113,21 +113,22 @@ const Navigation: React.FC<NavigationProps> = ({
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <motion.div
-              className="flex items-center space-x-2 cursor-pointer group"
-              whileHover={{ scale: 1.02 }}
-              onClick={onLogoClick}
-            >
-              <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center shadow-md">
-                <Package className="w-6 h-6 text-white" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                  12 Crate
-                </span>
-                <span className="text-xs text-gray-500">Premium Essentials</span>
-              </div>
-            </motion.div>
+   <motion.div
+  className="flex items-center space-x-2 cursor-pointer group"
+  whileHover={{ scale: 1.02 }}
+  onClick={onLogoClick}
+>
+  <img
+    className="w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 lg:w-44 lg:h-44 object-contain"
+    src="/logo.svg"
+    alt="12 Crate Premium Essentials Logo"
+    loading="lazy"
+    onError={(e) => {
+      e.currentTarget.src = '/fallback-logo.png';
+    }}
+  />
+</motion.div>
+
 
             <div className="hidden lg:flex items-center space-x-2">
               {navItems.map((item, index) => (
