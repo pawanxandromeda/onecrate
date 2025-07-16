@@ -669,7 +669,7 @@ const ProductsTab = () => {
               )}
               <div className="space-y-2 sm:space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600 font-medium text-xs sm:text-sm">Subtotal ({getTotalItems()} items)</span>
+                  <span className="text-gray-600 font-medium text-xs sm:text-sm">Discounted ({getTotalItems()} items price)</span>
                   <span className="font-semibold text-gray-900 text-xs sm:text-sm">₹{getTotalPrice()}</span>
                 </div>
                 <div className="flex justify-between items-center">
