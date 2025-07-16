@@ -87,6 +87,12 @@ const handleGoogleCallback = async (response: any) => {
     setUser(data.user);
     toast({ title: "Logged in with Google" });
     onSuccess?.();
+    if (window.innerWidth < 768) {
+  setTimeout(() => {
+    window.scrollTo(0, 0); // force a UI redraw
+  }, 200);
+}
+
     onClose();
   } catch (err: any) {
     console.error("Google login error:", err);
