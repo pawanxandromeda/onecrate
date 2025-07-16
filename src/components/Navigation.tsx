@@ -177,7 +177,7 @@ const Navigation: React.FC<NavigationProps> = ({
                     title="Profile"
                   >
                     <div className="w-40 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-sm font-bold">
-                      {user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U'}
+                      {user.fullName ? user.fullName.charAt(0).toUpperCase() : 'View Products'}
                     </div>
                   </motion.button>
 
