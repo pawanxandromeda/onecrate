@@ -8,83 +8,91 @@ import { motion } from 'framer-motion';
 interface SubscriptionDetailProps {
   subscriptionId: number;
   onBack: () => void;
+  isLoggedIn: boolean;
+  onSubscribe: (subscriptionId: number) => void;
 }
 
-const SubscriptionDetail = ({ subscriptionId, onBack }: SubscriptionDetailProps) => {
+const SubscriptionDetail = ({ subscriptionId, onBack, isLoggedIn, onSubscribe }: SubscriptionDetailProps) => {
   const subscriptionData = {
     1: {
-      title: "Kitchen Essentials",
-      description: "Premium cooking tools, spices, and kitchen gadgets delivered monthly to elevate your culinary experience",
-      price: "₹3319.17",
-      originalPrice: "₹4979.17",
-      mrp: "₹5979.17",
-      image: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=800",
-      rating: 4.8,
-      reviews: 1250,
+      title: "Basic Staples Kit",
+      description: "Essential kitchen staples at wholesale prices for daily cooking needs",
+      price: "₹499.00",
+      originalPrice: "₹699.00",
+      mrp: "₹714.00",
+      image: "/images/aashirvaad-shudh-atta.svg",
+      rating: 4.6,
+      reviews: 1100,
       popular: true,
       deliveryInfo: "Free delivery • Cancel anytime",
       nextDelivery: "Aug 20, 2025",
       items: [
-        { name: "Premium Spice Collection", value: "₹599", description: "Organic spices from around the world" },
-        { name: "Chef's Knife Set", value: "₹999", description: "Professional-grade stainless steel knives" },
-        { name: "Gourmet Recipe Cards", value: "₹199", description: "Step-by-step guides by expert chefs" },
+        { name: "Aashirvaad Shudh Atta 5kg", value: "₹259", description: "High-quality whole wheat flour" },
+        { name: "Fortune Rozana Gold Basmati Rice 1kg", value: "₹130", description: "Premium aged basmati rice" },
+        { name: "Tata Salt 1kg", value: "₹30", description: "Pure iodized salt" },
+        { name: "Fortune Sulphurless Sugar 1kg", value: "₹75", description: "Refined sugar without sulphur" },
+        { name: "P Mark Kachi Ghani Mustard Oil 1ltr", value: "₹220", description: "Cold-pressed mustard oil" }
       ],
       features: [
-        "Curated by professional chefs",
-        "Premium quality ingredients",
+        "Wholesale pricing on essentials",
+        "High-quality certified products",
         "Eco-friendly packaging",
-        "Recipe tutorials included",
+        "Fresh monthly deliveries",
         "Free shipping & returns"
       ]
     },
     2: {
-      title: "Daily Staples",
-      description: "Essential groceries delivered monthly at wholesale prices",
-      price: "₹2499.00",
-      originalPrice: "₹3799.00",
-      mrp: "₹4599.00",
-      image: "https://images.pexels.com/photos/4197981/pexels-photo-4197981.jpeg?auto=compress&cs=tinysrgb&w=800",
-      rating: 4.6,
-      reviews: 845,
+      title: "Premium Kitchen Kit",
+      description: "Premium cooking essentials with high-quality spices and oils",
+      price: "₹1099.00",
+      originalPrice: "₹1699.00",
+      mrp: "₹1780.00",
+      image: "/images/amul-cow-ghee.svg",
+      rating: 4.8,
+      reviews: 950,
       popular: false,
       deliveryInfo: "Free delivery • Cancel anytime",
       nextDelivery: "Aug 18, 2025",
       items: [
-        { name: "Basmati Rice 5kg", value: "₹749", description: "Premium aged rice" },
-        { name: "Whole Wheat Flour 5kg", value: "₹399", description: "High-fiber quality atta" },
-        { name: "Mixed Pulses 3kg", value: "₹799", description: "Packed with protein" },
+        { name: "Amul Cow Ghee 1ltr", value: "₹685", description: "Pure cow ghee for rich flavor" },
+        { name: "India Gate Pure Basmati Rice 5kg", value: "₹490", description: "Premium basmati rice" },
+        { name: "Catch Super Garam Masala 200g", value: "₹100", description: "Authentic spice blend" },
+        { name: "Saffola Gold Cooking Oil 2ltr", value: "₹449", description: "Healthy blended oil" },
+        { name: "Catch Kasuri Methi 50g", value: "₹56", description: "Aromatic dried fenugreek leaves" }
       ],
       features: [
-        "Wholesale pricing on all items",
-        "Locally sourced and certified",
-        "Delivered fresh every month",
-        "Eco packaging",
-        "Free delivery always"
+        "Curated premium ingredients",
+        "Enhances culinary experience",
+        "Eco-friendly packaging",
+        "Fresh monthly deliveries",
+        "Free shipping & returns"
       ]
     },
     3: {
-      title: "Snacks & Beverages",
-      description: "Enjoy monthly treats with chips, cookies, juices & more at unbeatable rates",
-      price: "₹1899.00",
-      originalPrice: "₹2899.00",
-      mrp: "₹3399.00",
-      image: "https://images.pexels.com/photos/4791269/pexels-photo-4791269.jpeg?auto=compress&cs=tinysrgb&w=800",
-      rating: 4.7,
-      reviews: 970,
+      title: "Snack Pack",
+      description: "Delicious snacks and spreads for your monthly indulgence",
+      price: "₹399.00",
+      originalPrice: "₹549.00",
+      mrp: "₹545.00",
+      image: "/images/kissan-mixed-fruit-jam.svg",
+      rating: 4.5,
+      reviews: 800,
       popular: false,
       deliveryInfo: "Free delivery • Cancel anytime",
       nextDelivery: "Aug 22, 2025",
       items: [
-        { name: "Cookies Combo Pack", value: "₹399", description: "Assorted flavors - 1kg" },
-        { name: "Chips Family Pack", value: "₹299", description: "10 large packets combo" },
-        { name: "Mango Juice Bottles (6)", value: "₹499", description: "Real fruit goodness" },
+        { name: "Mr Makhana Butter Tomato 20g", value: "₹50", description: "Flavorful roasted makhana" },
+        { name: "Whole Farm Premium Raw Peanuts 200g", value: "₹65", description: "Fresh raw peanuts" },
+        { name: "Kissan Mixed Fruit Jam 200g", value: "₹90", description: "Sweet and tangy fruit jam" },
+        { name: "Maggi Hot & Sweet Tomato Chilli Sauce 900g", value: "₹130", description: "Spicy tomato sauce" },
+        { name: "Whole Farm Grocery Makhana 100g", value: "₹210", description: "Light and healthy snack" }
       ],
       features: [
-        "Includes healthy & indulgent snacks",
+        "Mix of healthy & indulgent snacks",
         "Perfect for family sharing",
         "Sealed for freshness",
         "Delivered chilled",
-        "Cancel anytime"
+        "Free shipping & returns"
       ]
     }
   };
@@ -187,15 +195,19 @@ const SubscriptionDetail = ({ subscriptionId, onBack }: SubscriptionDetailProps)
             </div>
 
             {/* Actions */}
-            {/* <div className="space-y-3">
-              <Button size="lg" className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-lg font-semibold py-4">
+            <div className="space-y-3">
+              <Button
+                size="lg"
+                className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-lg font-semibold py-4"
+                onClick={() => onSubscribe(subscriptionId)}
+              >
                 Subscribe Now – {subscription.price}/month
               </Button>
-              <Button variant="outline" size="lg" className="w-full border-2 border-emerald-200 hover:bg-emerald-50 text-emerald-700 font-semibold py-4">
+              {/* <Button variant="outline" size="lg" className="w-full border-2 border-emerald-200 hover:bg-emerald-50 text-emerald-700 font-semibold py-4">
                 <Heart className="w-5 h-5 mr-2" />
                 Add to Wishlist
-              </Button>
-            </div> */}
+              </Button> */}
+            </div>
           </div>
         </div>
 

@@ -3,13 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Eye, EyeOff, Mail, Lock, User, Phone } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLogin, useSignup } from '@/hooks/useAuth';
-import { useToast } from "@/hooks/use-toast";
-import { useSetAtom } from 'jotai';
-import { userAtom } from '@/atoms/user';
+import { useToast } from '@/hooks/use-toast';
+import { useAuth } from './context/AuthContext';
+
 
 declare global {
   interface Window {
@@ -28,7 +28,12 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [googleError, setGoogleError] = useState<string | null>(null);
 
-  const setUser = useSetAtom(userAtom);
+  const { login } = useAuth();
+  const loginMutation = useLogin();
+  const signupMutation = useSignup();
+  const { toast } = useToast();
+  const googleRef = useRef<HTMLDivElement>(null);
+
   const [signupName, setSignupName] = useState('');
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPhone, setSignupPhone] = useState('');
@@ -37,78 +42,83 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
 
-  const loginMutation = useLogin();
-  const signupMutation = useSignup();
-  const { toast } = useToast();
-  const googleRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isOpen && window.google && googleRef.current) {
+        console.log("Google SDK loaded. Initializing...");
+        window.google.accounts.id.initialize({
+          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID!,
+          callback: handleGoogleCallback,
+        });
+        window.google.accounts.id.renderButton(googleRef.current, {
+          theme: 'outline',
+          size: 'large',
+          width: '100%',
+        });
+        clearInterval(interval);
+      }
+    }, 200);
 
-useEffect(() => {
-  const interval = setInterval(() => {
-    if (isOpen && window.google && googleRef.current) {
-      console.log("Google SDK loaded. Initializing...");
-      window.google.accounts.id.initialize({
-        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID!,
-        callback: handleGoogleCallback,
-      });
-      window.google.accounts.id.renderButton(googleRef.current, {
-        theme: 'outline',
-        size: 'large',
-        width: '100%',
-      });
-      clearInterval(interval); // stop polling
-    }
-  }, 200);
+    return () => clearInterval(interval);
+  }, [isOpen]);
 
-  return () => clearInterval(interval); // cleanup
-}, [isOpen]);
-
-
-const handleGoogleCallback = async (response: any) => {
-  try {
-    const res = await fetch("https://onecrate-backend.onrender.com/api/auth/google", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ credential: response.credential }),
-    });
-
-    const text = await res.text();
-    let data;
+  const handleGoogleCallback = async (response: any) => {
     try {
-      data = JSON.parse(text);
-    } catch (jsonErr) {
-      throw new Error("Invalid JSON from server: " + text);
+      const res = await fetch("https://onecrate-backend.onrender.com/api/auth/google", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credential: response.credential }),
+      });
+
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (jsonErr) {
+        throw new Error("Invalid JSON from server: " + text);
+      }
+
+      if (!res.ok) throw new Error(data.message || "Google login failed");
+
+      // Normalize user object to match AuthProvider's User interface
+      login(
+        {
+          id: data.user._id,
+          name: data.user.fullName,
+          email: data.user.email,
+          phone: data.user.phone,
+        },
+        data.token
+      );
+      toast({ title: "Logged in with Google" });
+      onSuccess?.();
+      onClose();
+      window.location.href = "/#profile";
+    } catch (err: any) {
+      console.error("Google login error:", err);
+      setGoogleError(err.message || "Something went wrong");
+      toast({
+        title: "Google Login Failed",
+        description: err.message || "Something went wrong",
+        variant: "destructive",
+      });
     }
-
-    if (!res.ok) throw new Error(data.message || "Google login failed");
-
-    localStorage.setItem("token", data.token);
-    setUser(data.user);
-    toast({ title: "Logged in with Google" });
-
-    // Ensure the modal closes and navigates to profile
-    onSuccess?.();
-    onClose();
-
-    // Explicitly navigate to the profile page to handle mobile redirects
-    window.location.href = "/#profile"; // Adjust this to your routing logic
-  } catch (err: any) {
-    console.error("Google login error:", err);
-    setGoogleError(err.message || "Something went wrong");
-    toast({
-      title: "Google Login Failed",
-      description: err.message || "Something went wrong",
-      variant: "destructive",
-    });
-  }
-};
+  };
 
   const handleSubmit = async (e: React.FormEvent, type: 'login' | 'signup') => {
     e.preventDefault();
     try {
       if (type === 'login') {
         const res = await loginMutation.mutateAsync({ email: loginEmail, password: loginPassword });
-        localStorage.setItem('token', res.token);
-        setUser(res.user);
+        login(
+          {
+            id: res.user._id,
+            name: res.user.fullName,
+            email: res.user.email,
+            phone: res.user.phone,
+          },
+          res.token
+        );
         toast({ title: "Logged in successfully" });
         onSuccess?.();
         onClose();
@@ -123,8 +133,15 @@ const handleGoogleCallback = async (response: any) => {
           phone: signupPhone,
           password: signupPassword,
         });
-        localStorage.setItem('token', res.token);
-        setUser(res.user);
+        login(
+          {
+            id: res.user._id,
+            name: res.user.fullName,
+            email: res.user.email,
+            phone: res.user.phone,
+          },
+          res.token
+        );
         toast({ title: "Account created successfully" });
         onSuccess?.();
         onClose();
@@ -164,7 +181,6 @@ const handleGoogleCallback = async (response: any) => {
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
           </TabsList>
 
-          {/* LOGIN */}
           <TabsContent value="login" className="space-y-4">
             <motion.form
               onSubmit={(e) => handleSubmit(e, 'login')}
@@ -204,7 +220,6 @@ const handleGoogleCallback = async (response: any) => {
             </motion.form>
           </TabsContent>
 
-          {/* SIGNUP */}
           <TabsContent value="signup" className="space-y-4">
             <motion.form
               onSubmit={(e) => handleSubmit(e, 'signup')}

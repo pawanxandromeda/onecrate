@@ -38,13 +38,20 @@ const Button: React.FC<ButtonProps> = ({
   );
 };
 
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+}
+
 interface NavigationProps {
   onAuthClick: () => void;
   onProfileClick: () => void;
   onLogoClick: () => void;
   onPageChange: (page: string) => void;
   onLogout: () => void;
-  user: { fullName: string; email: string } | null;
+  user: User | null;
   isMobileMenuOpen: boolean;
   setIsMobileMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -63,7 +70,7 @@ const Navigation: React.FC<NavigationProps> = ({
   onLogout,
   user,
   isMobileMenuOpen,
-  setIsMobileMenuOpen
+  setIsMobileMenuOpen,
 }) => {
   const [scrolled, setScrolled] = React.useState(false);
   const location = useLocation();
@@ -177,7 +184,7 @@ const Navigation: React.FC<NavigationProps> = ({
                     title="Profile"
                   >
                     <div className="w-40 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-sm font-bold">
-                      {user.fullName ? user.fullName.charAt(0).toUpperCase() : 'View Products'}
+                      {user.name ? user.name.charAt(0).toUpperCase() : 'View Products'}
                     </div>
                   </motion.button>
 

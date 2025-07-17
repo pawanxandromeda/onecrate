@@ -15,53 +15,73 @@ import { Button } from '@/components/ui/button';
 
 interface SubscriptionBoxesProps {
   onSubscriptionClick?: (subscriptionId: number) => void;
+  isLoggedIn: boolean;
+  onSubscribe: (subscriptionId: number) => void;
 }
 
-const SubscriptionBoxes = ({ onSubscriptionClick }: SubscriptionBoxesProps) => {
-   const subscriptionBoxes = [
-  {
-    id: 1,
-    title: "Kitchen Essentials",
-    description: "Save with wholesale rates on premium cooking tools, spices, and kitchen gadgets",
-    price: "₹3319.17",
-    originalPrice: "₹4979.17",
-    image: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=600",
-    rating: 4.8,
-    reviews: 1250,
-    popular: true,
-    items: ["Premium Spices", "Cooking Tools", "Recipe Cards", "Organic Ingredients", "Kitchen Gadgets"],
-    savings: "33% OFF",
-    itemSavings: "Save ₹75-₹300 per item"
-  },
-  {
-    id: 2,
-    title: "Daily Staples",
-    description: "Everyday groceries and essentials at bulk prices",
-    price: "₹2499.00",
-    originalPrice: "₹3799.00",
-    image: "https://images.pexels.com/photos/4197981/pexels-photo-4197981.jpeg?auto=compress&cs=tinysrgb&w=600",
-    rating: 4.6,
-    reviews: 845,
-    popular: false,
-    items: ["Rice", "Wheat Flour", "Lentils", "Sugar", "Salt"],
-    savings: "34% OFF",
-    itemSavings: "Save ₹50-₹250 per item"
-  },
-  {
-    id: 3,
-    title: "Snacks & Beverages",
-    description: "Enjoy monthly treats with chips, cookies, soft drinks & more at factory-direct prices",
-    price: "₹1899.00",
-    originalPrice: "₹2899.00",
-    image: "https://images.pexels.com/photos/4791269/pexels-photo-4791269.jpeg?auto=compress&cs=tinysrgb&w=600",
-    rating: 4.7,
-    reviews: 970,
-    popular: false,
-    items: ["Chips Pack", "Cookies", "Juices", "Energy Drinks", "Sweets"],
-    savings: "35% OFF",
-    itemSavings: "Save ₹40-₹180 per item"
-  }
-];
+const SubscriptionBoxes = ({ onSubscriptionClick, isLoggedIn, onSubscribe }: SubscriptionBoxesProps) => {
+  const subscriptionBoxes = [
+    {
+      id: 1,
+      title: "Basic Staples Kit",
+      description: "Essential kitchen staples at wholesale prices for daily cooking needs",
+      price: "₹499.00",
+      originalPrice: "₹699.00",
+      image: "/images/aashirvaad-shudh-atta.svg",
+      rating: 4.6,
+      reviews: 1100,
+      popular: true,
+      items: [
+        "Aashirvaad Shudh Atta 5kg",
+        "Fortune Rozana Gold Basmati Rice 1kg",
+        "Tata Salt 1kg",
+        "Fortune Sulphurless Sugar 1kg",
+        "P Mark Kachi Ghani Mustard Oil 1ltr"
+      ],
+      savings: "30% OFF",
+      itemSavings: "Save ₹10-₹50 per item"
+    },
+    {
+      id: 2,
+      title: "Premium Kitchen Kit",
+      description: "Premium cooking essentials with high-quality spices and oils",
+      price: "₹1099.00",
+      originalPrice: "₹1699.00",
+      image: "/images/amul-cow-ghee.svg",
+      rating: 4.8,
+      reviews: 950,
+      popular: false,
+      items: [
+        "Amul Cow Ghee 1ltr",
+        "India Gate Pure Basmati Rice 5kg",
+        "Catch Super Garam Masala 200g",
+        "Saffola Gold Cooking Oil 2ltr",
+        "Catch Kasuri Methi 50g"
+      ],
+      savings: "35% OFF",
+      itemSavings: "Save ₹20-₹100 per item"
+    },
+    {
+      id: 3,
+      title: "Snack Pack",
+      description: "Delicious snacks and spreads for your monthly indulgence",
+      price: "₹399.00",
+      originalPrice: "₹549.00",
+      image: "/images/kissan-mixed-fruit-jam.svg",
+      rating: 4.5,
+      reviews: 800,
+      popular: false,
+      items: [
+        "Mr Makhana Butter Tomato 20g",
+        "Whole Farm Premium Raw Peanuts 200g",
+        "Kissan Mixed Fruit Jam 200g",
+        "Maggi Hot & Sweet Tomato Chilli Sauce 900g",
+        "Whole Farm Grocery Makhana 100g"
+      ],
+      savings: "30% OFF",
+      itemSavings: "Save ₹10-₹40 per item"
+    }
+  ];
 
   const gridClass =
     subscriptionBoxes.length === 1
@@ -174,7 +194,7 @@ const SubscriptionBoxes = ({ onSubscriptionClick }: SubscriptionBoxesProps) => {
                             <Check className="w-4 h-4 text-emerald-500 mr-2" />
                             {item}
                           </span>
-                          <span className="text-emerald-600 font-medium">Save ₹{100 + idx * 20}</span>
+                          <span className="text-emerald-600 font-medium">Save ₹{10 + idx * 10}</span>
                         </div>
                       ))}
                       <div className="text-sm text-emerald-600 font-medium mt-2">
@@ -198,7 +218,14 @@ const SubscriptionBoxes = ({ onSubscriptionClick }: SubscriptionBoxesProps) => {
                   </div>
 
                   {/* Subscribe Button */}
-                  <Button size="lg" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg">
+                  <Button
+                    size="lg"
+                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent triggering onSubscriptionClick
+                      onSubscribe(box.id);
+                    }}
+                  >
                     Subscribe Now <ArrowRight className="ml-2 w-4 h-4" />
                   </Button>
                 </div>
@@ -241,4 +268,4 @@ const SubscriptionBoxes = ({ onSubscriptionClick }: SubscriptionBoxesProps) => {
   );
 };
 
-export default SubscriptionBoxes;
+export default SubscriptionBoxes; 

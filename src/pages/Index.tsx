@@ -13,10 +13,11 @@ import AuthModal from '@/components/AuthModal';
 import UserProfile from '@/components/UserProfile';
 import AboutPage from '@/components/AboutPage';
 import ContactPage from '@/components/ContactPage';
+
 import { useToast } from '@/hooks/use-toast';
-import { useAtom, useSetAtom } from 'jotai';
-import { userAtom } from '@/atoms/user';
-import api from '@/lib/api';
+import { useAuth } from '@/components/context/AuthContext';
+import KitBuilderTab from '@/components/Dashboard/KitBuilderTab';
+
 
 const Index = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -25,41 +26,16 @@ const Index = () => {
     'home' | 'profile' | 'about' | 'contact' | 'subscription-detail'
   >('home');
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<number | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user] = useAtom(userAtom);
-  const setUser = useSetAtom(userAtom);
+  const { user, isLoggedIn, loading } = useAuth();
   const { toast } = useToast();
   const location = useLocation();
 
   useEffect(() => {
-    // Handle token from Google Sign-In redirect
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
-    if (token && !localStorage.getItem('token')) {
-      localStorage.setItem('token', token);
-      api.get('/user', {
-        headers: { Authorization: `Bearer ${token}` },
-      }).then((res) => {
-        setUser(res.data.user);
-        setIsLoggedIn(true);
-        setCurrentView('profile');
-        setIsAuthModalOpen(false);
-        setIsMobileMenuOpen(false);
-        toast({ title: "Logged in with Google" });
-        // Clear query params from URL
-        window.history.replaceState({}, document.title, window.location.pathname + '#profile');
-      }).catch((err) => {
-        console.error(err);
-        toast({
-          title: "Authentication Error",
-          description: err.message || "Failed to fetch user data",
-          variant: "destructive",
-        });
-      });
-    }
+    window.scrollTo(0, 0);
+  }, [currentView, selectedSubscriptionId]);
 
-    // Handle hash-based routing for #profile
-    if (location.hash === '#profile' && user) {
+  useEffect(() => {
+    if (location.hash === '#profile' && isLoggedIn) {
       setCurrentView('profile');
       setIsAuthModalOpen(false);
       setIsMobileMenuOpen(false);
@@ -68,7 +44,7 @@ const Index = () => {
         description: 'Here you can manage your subscriptions, settings, and preferences.',
       });
     }
-  }, [location, user, setUser, toast]);
+  }, [location, isLoggedIn, toast]);
 
   const handleProfileClick = () => {
     if (isLoggedIn) {
@@ -112,7 +88,6 @@ const Index = () => {
   };
 
   const handleAuthSuccess = () => {
-    setIsLoggedIn(true);
     setIsAuthModalOpen(false);
     setIsMobileMenuOpen(false);
     setCurrentView('profile');
@@ -123,9 +98,8 @@ const Index = () => {
   };
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
     localStorage.removeItem('token');
-    setUser(null);
+    localStorage.removeItem('user');
     setCurrentView('home');
     setIsMobileMenuOpen(false);
     toast({
@@ -134,16 +108,30 @@ const Index = () => {
     });
   };
 
+  const handleSubscribe = (subscriptionId: number) => {
+    if (!isLoggedIn) {
+      setIsAuthModalOpen(true);
+      toast({
+        title: 'Login Required',
+        description: 'Please log in or sign up to subscribe.',
+      });
+    }
+  };
+
   const commonNavProps = {
     onAuthClick: handleAuthClick,
     onProfileClick: handleProfileClick,
     onLogoClick: handleLogoClick,
     onPageChange: handlePageChange,
     onLogout: handleLogout,
-    user: user,
+    user, // Now matches NavigationProps' user type
     isMobileMenuOpen,
     setIsMobileMenuOpen,
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   if (currentView === 'subscription-detail' && selectedSubscriptionId) {
     return (
@@ -152,8 +140,15 @@ const Index = () => {
         <SubscriptionDetail
           subscriptionId={selectedSubscriptionId}
           onBack={handleBackToSubscriptions}
+          isLoggedIn={isLoggedIn}
+          onSubscribe={handleSubscribe}
         />
         <Footer />
+        <AuthModal
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+          onSuccess={handleAuthSuccess}
+        />
       </>
     );
   }
@@ -163,6 +158,11 @@ const Index = () => {
       <>
         <Navigation {...commonNavProps} />
         <UserProfile />
+        <AuthModal
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+          onSuccess={handleAuthSuccess}
+        />
       </>
     );
   }
@@ -173,6 +173,11 @@ const Index = () => {
         <Navigation {...commonNavProps} />
         <AboutPage />
         <Footer />
+        <AuthModal
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+          onSuccess={handleAuthSuccess}
+        />
       </>
     );
   }
@@ -183,6 +188,11 @@ const Index = () => {
         <Navigation {...commonNavProps} />
         <ContactPage />
         <Footer />
+        <AuthModal
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+          onSuccess={handleAuthSuccess}
+        />
       </>
     );
   }
@@ -192,13 +202,20 @@ const Index = () => {
       <div className="min-h-screen bg-white">
         <Navigation {...commonNavProps} />
         <Hero />
-        <SubscriptionBoxes onSubscriptionClick={handleSubscriptionClick} />
+        <SubscriptionBoxes
+          onSubscriptionClick={handleSubscriptionClick}
+          isLoggedIn={isLoggedIn}
+          onSubscribe={handleSubscribe}
+        />
+        <KitBuilderTab
+          setActiveTab={(tabId) => console.log(`Switch to ${tabId}`)}
+          onSubscribe={handleSubscribe}
+        />
         <Features />
         <HowItWorks />
         <Stats />
         <Testimonials />
         <Footer />
-
         <AuthModal
           isOpen={isAuthModalOpen}
           onClose={() => setIsAuthModalOpen(false)}

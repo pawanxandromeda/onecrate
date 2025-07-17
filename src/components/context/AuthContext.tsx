@@ -4,7 +4,7 @@ interface User {
   id: string;
   name: string;
   email: string;
-  avatar?: string;
+  phone?: string;
 }
 
 interface AuthContextType {
@@ -24,12 +24,12 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     const initializeAuth = () => {
       const token = localStorage.getItem('token');
       const userData = localStorage.getItem('user');
-      
+
       if (token && userData) {
         try {
           setUser(JSON.parse(userData));
@@ -62,14 +62,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     isLoggedIn: !!user,
     login,
     logout,
-    loading
+    loading,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
