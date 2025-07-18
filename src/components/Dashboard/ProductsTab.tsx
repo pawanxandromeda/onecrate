@@ -312,48 +312,47 @@ const handleCheckout = async () => {
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || 'Failed to create order');
 
-    const options = {
-      key: data.razorpayKeyId,
-      order_id: data.order.id,
-      method: 'upi',
-      recurring: true,
-      name: 'OneCrate Essentials',
-      description: `Recurring kit payment for ${subscriptionName}`,
-      image: '/logo.svg',
-      handler: async function (response: any) {
-        try {
-          const verifyRes = await fetch('https://onecrate-backend.onrender.com/api/recurring-verify', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_signature: response.razorpay_signature,
-              subscriptionName: subscriptionName,
-            }),
-          });
+   const options = {
+  key: data.razorpayKeyId,
+  order_id: data.order.id,
+  name: 'OneCrate Essentials',
+  description: `Payment for ${subscriptionName}`,
+  image: '/logo.svg',
+  handler: async function (response: any) {
+    try {
+      const verifyRes = await fetch('https://onecrate-backend.onrender.com/api/recurring-verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_signature: response.razorpay_signature,
+          subscriptionName: subscriptionName,
+        }),
+      });
 
-          if (!verifyRes.ok) throw new Error('Verification failed');
+      if (!verifyRes.ok) throw new Error('Verification failed');
 
-          toast.success('Subscription started!', { duration: 3000 });
-          setCart({});
-          setSubscriptionName('');
-        } catch (err) {
-          toast.error('Payment verification failed.');
-        }
-      },
-      prefill: {
-        name: user?.fullName || '',
-        email: user?.email || '',
-        contact: user?.phone || '',
-      },
-      theme: {
-        color: '#059669',
-      },
-    };
+      toast.success('Subscription started!', { duration: 3000 });
+      setCart({});
+      setSubscriptionName('');
+    } catch (err) {
+      toast.error('Payment verification failed.');
+    }
+  },
+  prefill: {
+    name: user?.fullName || '',
+    email: user?.email || '',
+    contact: user?.phone || '',
+  },
+  theme: {
+    color: '#059669',
+  },
+};
+
 
     const rzp = new window.Razorpay(options);
     rzp.open();
