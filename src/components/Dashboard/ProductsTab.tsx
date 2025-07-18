@@ -261,120 +261,109 @@ const ProductsTab = () => {
       setIsCheckoutOpen(true);
     }
   };
+const handleCheckout = async () => {
+  if (!subscriptionName.trim()) {
+    toast.error("Please enter a subscription name");
+    return;
+  }
 
-  const handleCheckout = async () => {
-    if (!subscriptionName.trim()) {
-      toast.error("Please enter a subscription name", { duration: 3000 });
-      return;
-    }
+  const token = localStorage.getItem("token");
+  if (!token) {
+    setIsAuthModalOpen(true);
+    return;
+  }
 
-    const token = localStorage.getItem("token");
-    if (!token) {
-      toast.error("Authentication token not found. Please log in again.", { duration: 3000 });
-      setIsAuthModalOpen(true);
-      return;
-    }
+  setIsSubmitting(true);
 
-    setIsSubmitting(true);
+  const subscriptionData = {
+    subscriptionName,
+    items: Object.entries(cart).map(([id, qty]) => {
+      const product = products.find((p) => p.id === parseInt(id));
+      return {
+        productId: parseInt(id),
+        name: product?.name,
+        quantity: qty,
+        price: product?.price,
+        mrp: product?.mrp,
+        unit: product?.unit,
+      };
+    }),
+    totalItems: getTotalItems(),
+    subtotal: getTotalPrice(),
+    platformFee: PLATFORM_FEE,
+    totalMRP: getTotalMRP(),
+    totalSavings: getTotalSavings(),
+    grandTotal: getTotalPrice() + PLATFORM_FEE,
+  };
 
-    const subscriptionData = {
-      subscriptionName,
-      items: Object.entries(cart).map(([id, qty]) => {
-        const product = products.find((p) => p.id === parseInt(id));
-        return {
-          productId: parseInt(id),
-          name: product?.name,
-          quantity: qty,
-          price: product?.price,
-          mrp: product?.mrp,
-          unit: product?.unit,
-        };
-      }),
-      totalItems: getTotalItems(),
-      subtotal: getTotalPrice(),
-      platformFee: PLATFORM_FEE,
-      totalMRP: getTotalMRP(),
-      totalSavings: getTotalSavings(),
-      grandTotal: getTotalPrice() + PLATFORM_FEE,
+  try {
+    await loadRazorpayScript();
+
+    // Create Razorpay recurring order
+    const res = await fetch('https://onecrate-backend.onrender.com/api/recurring-order', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(subscriptionData),
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to create order');
+
+    const options = {
+      key: data.razorpayKeyId,
+      order_id: data.order.id,
+      method: 'upi',
+      recurring: true,
+      name: 'OneCrate Essentials',
+      description: `Recurring kit payment for ${subscriptionName}`,
+      image: '/logo.svg',
+      handler: async function (response: any) {
+        try {
+          const verifyRes = await fetch('https://onecrate-backend.onrender.com/api/recurring-verify', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+              subscriptionName: subscriptionName,
+            }),
+          });
+
+          if (!verifyRes.ok) throw new Error('Verification failed');
+
+          toast.success('Subscription started!', { duration: 3000 });
+          setCart({});
+          setSubscriptionName('');
+        } catch (err) {
+          toast.error('Payment verification failed.');
+        }
+      },
+      prefill: {
+        name: user?.fullName || '',
+        email: user?.email || '',
+        contact: user?.phone || '',
+      },
+      theme: {
+        color: '#059669',
+      },
     };
 
-    try {
-      await loadRazorpayScript();
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  } catch (err: any) {
+    toast.error(err.message || 'Something went wrong.');
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
-      // Step 1: Send subscription data to backend to create Razorpay Subscription
-      const response = await fetch('https://onecrate-backend.onrender.com/api/subscriptions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(subscriptionData), // Send subscriptionData directly
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create Razorpay subscription');
-      }
-
-      const { razorpaySubscription, razorpayKeyId, subscription } = await response.json();
-
-      setIsCheckoutOpen(false); // Close modal if open
-
-      const options = {
-        key: razorpayKeyId,
-        subscription_id: razorpaySubscription.id,
-        name: 'OneCrate Essentials',
-        description: `Subscription: ${subscriptionName}`,
-        image: '/logo.svg',
-        handler: async (response: any) => {
-          try {
-            const verifyRes = await fetch('https://onecrate-backend.onrender.com/api/subscriptions/verify-payment', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-              },
-              body: JSON.stringify({
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_subscription_id: response.razorpay_subscription_id,
-                razorpay_signature: response.razorpay_signature,
-              }),
-            });
-
-            if (!verifyRes.ok) {
-              const errorData = await verifyRes.json();
-              throw new Error(errorData.message || 'Payment verification failed');
-            }
-
-            toast.success(`Subscription created successfully for ₹${subscriptionData.grandTotal}/month`, {
-              duration: 3000,
-            });
-            setCart({});
-            setSubscriptionName('');
-          } catch (error) {
-            toast.error(error.message || 'Verification failed. Try again.', { duration: 3000 });
-            console.error('Verification Error:', error);
-          }
-        },
-        prefill: {
-          name: user?.fullName || '',
-          email: user?.email || '',
-          contact: user?.phone || '',
-        },
-        theme: {
-          color: '#059669',
-        },
-      };
-
-      const razorpay = new window.Razorpay(options);
-      razorpay.open();
-    } catch (error) {
-      toast.error(error.message || "Subscription creation failed. Try again.", { duration: 3000 });
-      console.error('Checkout Error:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const handleRemoveFilter = () => {
     setSelectedSubcategory('all');
