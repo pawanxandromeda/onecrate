@@ -75,7 +75,7 @@ const UserProfile = () => {
 
       try {
       const token = localStorage.getItem('token');
-        const res = await api.get('/subscriptions', {
+        const res = await api.get('/subscriptionsget', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
