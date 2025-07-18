@@ -315,7 +315,7 @@ const handleCheckout = async () => {
    const options = {
   key: data.razorpayKeyId,
   order_id: data.order.id,
-  name: 'OneCrate Essentials',
+  name: '12 Crate Essentials',
   description: `Payment for ${subscriptionName}`,
   image: '/logo.svg',
   handler: async function (response: any) {

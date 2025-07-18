@@ -29,20 +29,20 @@ const ContactPage = () => {
     {
       icon: Mail,
       title: "Email Us",
-      content: "support@onecrate.com",
+      content: "pawanxandromeda@gmail.com",
       description: "Get in touch via email"
     },
     {
       icon: Phone,
       title: "Call Us",
-      content: "+1 (555) 123-4567",
+      content: "+91 7018620563 ",
       description: "Mon-Fri 9AM-6PM EST"
     },
     {
       icon: MapPin,
       title: "Visit Us",
-      content: "123 Business Ave, Suite 100",
-      description: "New York, NY 10001"
+      content: "Hs-9 Jhungian Road- Mohali 140301",
+      description: "Punjab, India"
     },
     {
       icon: MessageCircle,
