@@ -40,7 +40,7 @@ interface User {
   phone?: string;
 }
 
-const PLATFORM_FEE = 99;
+const PLATFORM_FEE = 1;
 
 // Function to load Razorpay SDK dynamically
 const loadRazorpayScript = () => {
