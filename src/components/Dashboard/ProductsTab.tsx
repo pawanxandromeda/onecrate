@@ -301,67 +301,67 @@ const ProductsTab = () => {
   };
 
   try {
-    // Load Razorpay SDK
     await loadRazorpayScript();
 
-    // Send subscription data to backend
+    // Step 1: Send to backend to create Razorpay Order (not subscription)
     const response = await fetch('https://onecrate-backend.onrender.com/api/subscriptions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify(subscriptionData),
+      body: JSON.stringify({ 
+        amount: subscriptionData.grandTotal, // in ₹
+        subscriptionData
+      }),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to create subscription');
+      throw new Error(errorData.message || 'Failed to create Razorpay order');
     }
 
-    const result = await response.json();
-    const { razorpaySubscription, razorpayKeyId } = result;
+    const { razorpayOrderId, razorpayKeyId } = await response.json();
 
-    // Close the checkout dialog before opening Razorpay modal
-    setIsCheckoutOpen(false);
+    setIsCheckoutOpen(false); // Close modal if open
 
-    // Initialize Razorpay payment modal
     const options = {
       key: razorpayKeyId,
-      subscription_id: razorpaySubscription.id,
-      name: 'Your Company Name',
-      description: `Subscription: ${subscriptionName}`,
-      image: '/path/to/your/logo.png',
+      amount: subscriptionData.grandTotal * 100, // in paise
+      currency: 'INR',
+      name: 'OneCrate Essentials',
+      description: `Order: ${subscriptionName}`,
+      order_id: razorpayOrderId,
+      image: '/logo.svg',
       handler: async (response: any) => {
-        // Verify payment on the backend
         try {
-          const verifyResponse = await fetch('https://onecrate-backend.onrender.com/api/subscriptions/verify-payment', {
+          const verifyRes = await fetch('https://onecrate-backend.onrender.com/api/subscriptions/verify-payment', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify({
+              razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_subscription_id: response.razorpay_subscription_id,
               razorpay_signature: response.razorpay_signature,
+              subscriptionData,
             }),
           });
 
-          if (!verifyResponse.ok) {
-            const errorData = await verifyResponse.json();
+          if (!verifyRes.ok) {
+            const errorData = await verifyRes.json();
             throw new Error(errorData.message || 'Payment verification failed');
           }
 
-          toast.success(
-            `Subscription "${subscriptionName}" created and payment verified successfully for ₹${getTotalPrice() + PLATFORM_FEE}`,
-            { duration: 3000 }
-          );
+          toast.success(`Payment successful for ₹${subscriptionData.grandTotal}`, {
+            duration: 3000,
+          });
           setCart({});
           setSubscriptionName('');
         } catch (error) {
-          toast.error(error.message || 'Payment verification failed. Please try again.', { duration: 3000 });
-          console.error('Payment verification error:', error);
+          toast.error(error.message || 'Verification failed. Try again.', { duration: 3000 });
+          console.error('Verification Error:', error);
         }
       },
       prefill: {
@@ -377,12 +377,13 @@ const ProductsTab = () => {
     const razorpay = new window.Razorpay(options);
     razorpay.open();
   } catch (error) {
-    toast.error(error.message || "Failed to create subscription. Please try again.", { duration: 3000 });
-    console.error('Subscription error:', error);
+    toast.error(error.message || "Payment failed. Try again.", { duration: 3000 });
+    console.error('Checkout Error:', error);
   } finally {
     setIsSubmitting(false);
   }
 };
+
   const handleRemoveFilter = () => {
     setSelectedSubcategory('all');
     toast.info("Subcategory filter removed", { duration: 2000 });
