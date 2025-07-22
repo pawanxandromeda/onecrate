@@ -12,22 +12,22 @@ const Footer = () => {
       { name: 'Press', href: '#' },
     ],
     support: [
-      { name: 'Help Center', href: '#' },
-      { name: 'Contact Us', href: '#contact' },
-      { name: 'FAQ', href: '#' },
-      { name: 'Shipping Info', href: '#' },
+      { name: 'Help Center', href: '#home' },
+      { name: 'Contact Us', href: '#home' },
+      { name: 'FAQ', href: '#home' },
+      { name: 'Shipping Info', href: '#home' },
     ],
     legal: [
-      { name: 'Privacy Policy', href: '#' },
-      { name: 'Terms of Service', href: '#' },
-      { name: 'Cookie Policy', href: '#' },
-      { name: 'Refund Policy', href: '#' },
+      // { name: 'Privacy Policy', href: '#' },
+      // { name: 'Terms of Service', href: '#' },
+      // { name: 'Cookie Policy', href: '#' },
+      // { name: 'Refund Policy', href: '#' },
     ],
     categories: [
-      { name: 'Kitchen Essentials', href: '#subscriptions' },
-      { name: 'Hygiene Care', href: '#subscriptions' },
-      { name: 'Bathroom Luxury', href: '#subscriptions' },
-      { name: 'Pet Care', href: '#subscriptions' },
+      // { name: 'Kitchen Essentials', href: '#subscriptions' },
+      // { name: 'Hygiene Care', href: '#subscriptions' },
+      // { name: 'Bathroom Luxury', href: '#subscriptions' },
+      // { name: 'Pet Care', href: '#subscriptions' },
     ]
   };
 

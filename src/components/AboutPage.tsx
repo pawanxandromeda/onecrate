@@ -31,27 +31,27 @@ const AboutPage = () => {
   ];
 
   const team = [
-    {
-      name: "Alex Rivera",
-      role: "Founder & CEO",
-      image: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=300",
-      bio: "Passionate about revolutionizing how families manage their household essentials.",
-      social: { linkedin: "#", twitter: "#" }
-    },
-    {
-      name: "Sarah Kim",
-      role: "Head of Operations",
-      image: "https://images.pexels.com/photos/3763188/pexels-photo-3763188.jpeg?auto=compress&cs=tinysrgb&w=300",
-      bio: "Expert in supply chain management with 10+ years of experience.",
-      social: { linkedin: "#", twitter: "#" }
-    },
-    {
-      name: "David Chen",
-      role: "Product Director",
-      image: "https://images.pexels.com/photos/3756679/pexels-photo-3756679.jpeg?auto=compress&cs=tinysrgb&w=300",
-      bio: "Curates the perfect selection of premium household products for our customers.",
-      social: { linkedin: "#", twitter: "#" }
-    }
+    // {
+    //   name: "Alex Rivera",
+    //   role: "Founder & CEO",
+    //   image: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=300",
+    //   bio: "Passionate about revolutionizing how families manage their household essentials.",
+    //   social: { linkedin: "#", twitter: "#" }
+    // },
+    // {
+    //   name: "Sarah Kim",
+    //   role: "Head of Operations",
+    //   image: "https://images.pexels.com/photos/3763188/pexels-photo-3763188.jpeg?auto=compress&cs=tinysrgb&w=300",
+    //   bio: "Expert in supply chain management with 10+ years of experience.",
+    //   social: { linkedin: "#", twitter: "#" }
+    // },
+    // {
+    //   name: "David Chen",
+    //   role: "Product Director",
+    //   image: "https://images.pexels.com/photos/3756679/pexels-photo-3756679.jpeg?auto=compress&cs=tinysrgb&w=300",
+    //   bio: "Curates the perfect selection of premium household products for our customers.",
+    //   social: { linkedin: "#", twitter: "#" }
+    // }
   ];
 
   const achievements = [
@@ -211,70 +211,7 @@ const AboutPage = () => {
       </section>
 
       {/* Team Section */}
-      <section className="py-24 bg-gradient-to-br from-white to-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="text-center mb-20"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-5xl font-bold text-gray-900 mb-6">
-              Meet Our <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">Team</span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              The passionate people behind BoxCraft who make magic happen every day
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-10">
-            {team.map((member, index) => (
-              <motion.div
-                key={member.name}
-                className="group relative"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.2 }}
-                viewport={{ once: true }}
-              >
-                <div className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 text-center relative overflow-hidden">
-                  {/* Hover Background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-50 to-teal-50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  
-                  <div className="relative z-10">
-                    <motion.div
-                      className="relative mb-6"
-                      whileHover={{ scale: 1.05 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full blur-lg opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
-                      <img 
-                        src={member.image}
-                        alt={member.name}
-                        className="relative w-32 h-32 rounded-full object-cover mx-auto shadow-xl border-4 border-white"
-                      />
-                    </motion.div>
-                    
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{member.name}</h3>
-                    <p className="text-emerald-600 font-semibold mb-4 text-lg">{member.role}</p>
-                    <p className="text-gray-600 leading-relaxed mb-6">{member.bio}</p>
-                    
-                    <motion.button
-                      className="inline-flex items-center space-x-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-6 py-3 rounded-xl font-semibold hover:from-emerald-600 hover:to-teal-600 transition-all duration-300 shadow-lg hover:shadow-xl"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <span>Connect</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </motion.button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+     
     </div>
   );
 };

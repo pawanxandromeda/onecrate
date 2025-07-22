@@ -95,7 +95,7 @@ const Navigation: React.FC<NavigationProps> = ({
     { name: 'Browse Kits', path: 'home#subscriptions', highlight: true },
     { name: 'How It Works', path: 'home#how-it-works', highlight: false },
     { name: 'About', path: 'about', highlight: false },
-    { name: 'Contact', path: 'contact', highlight: false },
+   // { name: 'Contact', path: 'contact', highlight: false },
   ];
 
   const handleNavClick = (item: NavItem) => {
