@@ -206,10 +206,10 @@ const Index = () => {
           isLoggedIn={isLoggedIn}
           onSubscribe={handleSubscribe}
         />
-        <KitBuilderTab
+        {/* <KitBuilderTab
           setActiveTab={(tabId) => console.log(`Switch to ${tabId}`)}
           onSubscribe={handleSubscribe}
-        />
+        /> */}
         <Features />
         <HowItWorks />
         <Stats />
