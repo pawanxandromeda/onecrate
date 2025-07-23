@@ -85,7 +85,7 @@ const ProductsTab = () => {
 
  const products: Product[] = [
     // Atta
-    { id: 1, name: 'Aashirvaad Shudh Atta', category: 'kitchen', subcategory: 'atta', mrp: 259, price: Math.round(1 * 0.92), unit: '5 kg', rating: 4.5, image: '/images/aashirvaad-shudh-atta.svg' },
+    { id: 1, name: 'Aashirvaad Shudh Atta', category: 'kitchen', subcategory: 'atta', mrp: 259, price: Math.round(259 * 0.92), unit: '5 kg', rating: 4.5, image: '/images/aashirvaad-shudh-atta.svg' },
     { id: 2, name: 'Aashirvaad Shudh Chakki Atta', category: 'kitchen', subcategory: 'atta', mrp: 495, price: Math.round(495 * 0.93), unit: '10 kg', rating: 4.6, image: '/images/aashirvaad-shudh-chakki-atta.svg' },
     { id: 3, name: 'Fortune Chakki Fresh', category: 'kitchen', subcategory: 'atta', mrp: 222, price: Math.round(222 * 0.92), unit: '5 kg', rating: 4.4, image: '/images/fortune-chakki-fresh.svg' },
     { id: 4, name: 'Aashirvaad Select 100% MP Sharbati Atta', category: 'kitchen', subcategory: 'atta', mrp: 370, price: Math.round(370 * 0.91), unit: '5 kg', rating: 4.7, image: '/images/aashirvaad-select-100-mp-sharbati-atta.svg' },
